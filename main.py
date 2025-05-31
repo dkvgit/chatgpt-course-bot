@@ -4,6 +4,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 import os
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+print("BOT_TOKEN =", BOT_TOKEN)  # 👉 ВАЖНО для отладки
+
 
 CHANNEL_LINK = "https://t.me/ai_chatgpt_course_bot"  # Замени на свою ссылку
 
