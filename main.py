@@ -30,33 +30,32 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "demo":
         await query.edit_message_text("Открытый урок: https://t.me/neuronica_news/1")
 
-# Инициализация Telegram приложения
+# Telegram App
 bot_app = ApplicationBuilder().token(BOT_TOKEN).build()
 bot_app.add_handler(CommandHandler("start", start))
 bot_app.add_handler(CallbackQueryHandler(button_handler))
 
-# AIOHTTP-приложение
+# AIOHTTP app
 app = web.Application()
 
-# Webhook POST
 async def handle_webhook(request):
     data = await request.json()
     update = Update.de_json(data, bot_app.bot)
     await bot_app.update_queue.put(update)
     return web.Response(text="OK")
 
-# Проверка живости
 async def root(request):
     return web.Response(text="Bot is alive")
 
-# Роутинг
 app.router.add_post(f"/{BOT_TOKEN}", handle_webhook)
 app.router.add_get("/", root)
 
-# Запуск сервера с инициализацией Telegram бота
-if __name__ == "__main__":
-    async def main():
-        await bot_app.initialize()
-        web.run_app(app, port=int(os.getenv("PORT", 8080)))
+# 💡 Важный момент: Telegram App нужно инициализировать до запуска aiohttp
+async def on_startup(app):
+    await bot_app.initialize()
 
-    asyncio.run(main())
+app.on_startup.append(on_startup)
+
+# Запуск Web-сервера
+if __name__ == "__main__":
+    web.run_app(app, port=int(os.getenv("PORT", 8080)))
