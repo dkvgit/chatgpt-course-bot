@@ -36,6 +36,5 @@ if __name__ == "__main__":
     app.run_webhook(
         listen="0.0.0.0",
         port=int(os.environ.get("PORT", 5000)),
-        webhook_url=f"https://chatgpt-course-bot.onrender.com/{BOT_TOKEN}"
+        webhook_url="https://chatgpt-course-bot.onrender.com/webhook"
     )
-    
