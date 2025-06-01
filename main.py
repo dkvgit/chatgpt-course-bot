@@ -2,7 +2,6 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 from aiohttp import web
 import os
-import asyncio
 
 BOT_TOKEN = "7376438241:AAG9hmZKKZJ38le5m6Pk7DjDjwMNWed9l5A"
 CHANNEL_LINK = "https://t.me/ai_chatgpt_course_bot"
@@ -50,9 +49,10 @@ async def root(request):
 app.router.add_post(f"/{BOT_TOKEN}", handle_webhook)
 app.router.add_get("/", root)
 
-# 💡 Важный момент: Telegram App нужно инициализировать до запуска aiohttp
+# ✅ Инициализация + запуск
 async def on_startup(app):
     await bot_app.initialize()
+    await bot_app.start()  # ← вот этой строки не хватало
 
 app.on_startup.append(on_startup)
 
