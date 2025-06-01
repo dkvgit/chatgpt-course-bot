@@ -1,10 +1,12 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+from aiohttp import web
+import os
 
 BOT_TOKEN = "7376438241:AAG9hmZKKZJ38le5m6Pk7DjDjwMNWed9l5A"
 CHANNEL_LINK = "https://t.me/ai_chatgpt_course_bot"
 
-# Команда /start
+# Обработчик команды /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🔍 О курсе", callback_data="about")],
@@ -21,19 +23,35 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("💡 Этот курс научит тебя использовать ИИ: просто, с юмором и по делу.\nСтоимость: 990₽.")
     elif query.data == "buy":
         keyboard = [[InlineKeyboardButton("✅ Я оплатил", callback_data="paid")]]
-        await query.edit_message_text(
-            "Переведи 990₽ на карту 1234 5678 9012 3456\nПосле этого нажми 'Я оплатил'",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
+        await query.edit_message_text("Переведи 990₽ на карту 1234 5678 9012 3456\nПосле этого нажми 'Я оплатил'", reply_markup=InlineKeyboardMarkup(keyboard))
     elif query.data == "paid":
         await query.edit_message_text(f"Спасибо! Вот ссылка на курс:\n{CHANNEL_LINK}")
     elif query.data == "demo":
         await query.edit_message_text("Открытый урок: https://t.me/neuronica_news/1")
 
-# Запуск
+# Инициализация бота
+bot_app = ApplicationBuilder().token(BOT_TOKEN).build()
+bot_app.add_handler(CommandHandler("start", start))
+bot_app.add_handler(CallbackQueryHandler(button_handler))
+
+# AIOHTTP app и webhook
+app = web.Application()
+
+# Webhook POST
+async def handle_webhook(request):
+    data = await request.json()
+    update = Update.de_json(data, bot_app.bot)
+    await bot_app.update_queue.put(update)
+    return web.Response(text="OK")
+
+# Корневой маршрут GET /
+async def root(request):
+    return web.Response(text="Bot is alive")
+
+# Роутинг
+app.router.add_post(f"/{BOT_TOKEN}", handle_webhook)
+app.router.add_get("/", root)
+
+# Запуск сервера
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button_handler))
-    print(">>> Бот запущен локально (polling)")
-    app.run_polling()
+    web.run_app(app, port=int(os.getenv("PORT", 10000)))
