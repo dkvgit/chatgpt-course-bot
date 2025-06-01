@@ -5,7 +5,7 @@ import os
 
 # Загружаем токен
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-print("💡 BOT_TOKEN =", BOT_TOKEN)  # отладка
+print("BOT_TOKEN =", BOT_TOKEN)  # 👈 убедись, что печатает корректно
 
 # Ссылка на канал с курсом
 CHANNEL_LINK = "https://t.me/ai_chatgpt_course_bot"
