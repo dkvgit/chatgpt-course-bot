@@ -2,11 +2,12 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 from aiohttp import web
 import os
+import asyncio
 
 BOT_TOKEN = "7376438241:AAG9hmZKKZJ38le5m6Pk7DjDjwMNWed9l5A"
 CHANNEL_LINK = "https://t.me/ai_chatgpt_course_bot"
 
-# Обработчик команды /start
+# Команда /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🔍 О курсе", callback_data="about")],
@@ -29,12 +30,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "demo":
         await query.edit_message_text("Открытый урок: https://t.me/neuronica_news/1")
 
-# Инициализация бота
+# Инициализация Telegram приложения
 bot_app = ApplicationBuilder().token(BOT_TOKEN).build()
 bot_app.add_handler(CommandHandler("start", start))
 bot_app.add_handler(CallbackQueryHandler(button_handler))
 
-# AIOHTTP app и webhook
+# AIOHTTP-приложение
 app = web.Application()
 
 # Webhook POST
@@ -44,7 +45,7 @@ async def handle_webhook(request):
     await bot_app.update_queue.put(update)
     return web.Response(text="OK")
 
-# Корневой маршрут GET /
+# Проверка живости
 async def root(request):
     return web.Response(text="Bot is alive")
 
@@ -52,6 +53,10 @@ async def root(request):
 app.router.add_post(f"/{BOT_TOKEN}", handle_webhook)
 app.router.add_get("/", root)
 
-# Запуск сервера
+# Запуск сервера с инициализацией Telegram бота
 if __name__ == "__main__":
-    web.run_app(app, port=int(os.getenv("PORT", 10000)))
+    async def main():
+        await bot_app.initialize()
+        web.run_app(app, port=int(os.getenv("PORT", 8080)))
+
+    asyncio.run(main())
