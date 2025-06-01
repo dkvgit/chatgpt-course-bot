@@ -48,7 +48,7 @@ def webhook():
     print("🔥 Webhook вызван")
     data = request.get_json(force=True)
     print("📦 Получено:", data)
-    bot_app.update_queue.put_nowait(Update.de_json(data, bot_app.bot))
+    bot_app.update_queue.put_nowait(Update.de_json(request.get_json(force=True), bot_app.bot))
     return "ok"
 
 # Проверка доступности сервиса
