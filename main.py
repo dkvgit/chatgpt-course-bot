@@ -3,7 +3,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 from aiohttp import web
 import os
 
-BOT_TOKEN = "7376438241:AAG9hmZKKZJ38le5m6Pk7DjDjwMNWed9l5A"
+# BOT_TOKEN = "7376438241:AAG9hmZKKZJ38le5m6Pk7DjDjwMNWed9l5A"
 CHANNEL_LINK = "https://t.me/ai_chatgpt_course_bot"
 
 # Команда /start
