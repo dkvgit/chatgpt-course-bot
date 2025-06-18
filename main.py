@@ -249,9 +249,6 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
 
 # === ЗАПУСК ===
-PORT = int(os.getenv("PORT", 8080))
-BASE_URL = os.getenv("RAILWAY_STATIC_URL")
-
 async def handle_webhook(request):
     data = await request.json()
     update = Update.de_json(data, application.bot)
@@ -261,16 +258,17 @@ async def handle_webhook(request):
 async def on_startup(app):
     await application.initialize()
     await application.start()
-    webhook_url = f"https://{BASE_URL}/{BOT_TOKEN}"
+    webhook_url = f"https://{RAILWAY_STATIC_URL}/{BOT_TOKEN}"
+    print("📡 Установка webhook:", webhook_url)
     await application.bot.set_webhook(webhook_url)
 
 async def root(request):
     return web.Response(text="🤖 Бот работает")
 
-# Telegram bot
-application = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
+# === Инициализация Telegram бота ===
+application = ApplicationBuilder().token(BOT_TOKEN).build()
 
-# Обработчики (как раньше)
+# === Добавь свои handlers сюда ===
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("menu", menu))
 application.add_handler(CommandHandler("myid", my_id))
@@ -281,12 +279,12 @@ application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
 application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
 application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
 
-# aiohttp app
+# === aiohttp сервер Railway ===
 web_app = web.Application()
-web_app.router.add_post(f"/{os.getenv('BOT_TOKEN')}", handle_webhook)
+web_app.router.add_post(f"/{BOT_TOKEN}", handle_webhook)
 web_app.router.add_get("/", root)
 web_app.on_startup.append(on_startup)
 
 if __name__ == "__main__":
-    print("🚀 Бот запускается на Railway...")
+    print("🚀 Запуск на Railway...")
     web.run_app(web_app, port=PORT)
