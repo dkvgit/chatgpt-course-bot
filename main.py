@@ -4,15 +4,16 @@ import os
 from aiohttp import web
 
 # === Переменные окружения ===
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-OWNER_ID_ENV = os.getenv("OWNER_ID")
-RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
+BOT_TOKEN=7927577300:AAGM-KTDK3eAx8sS59fWaEKCF4ZZYtNgI18
+OWNER_ID=5425101564
+RAILWAY_STATIC_URL=chatgpt-course-bot.up.railway.app
+
 PORT = int(os.getenv("PORT", 8080))
 
 
 
 # === Проверка и логирование переменных ===
-print("📡 Установка webhook:", webhook_url)
+
 print("✅ ENV BOT_TOKEN:", BOT_TOKEN[:10] + "..." if BOT_TOKEN else "❌ НЕ УСТАНОВЛЕН")
 print("✅ ENV OWNER_ID:", OWNER_ID_ENV or "❌ НЕ УСТАНОВЛЕН")
 print("✅ ENV RAILWAY_STATIC_URL:", RAILWAY_STATIC_URL or "❌ НЕ УСТАНОВЛЕН")
