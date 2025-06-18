@@ -4,7 +4,11 @@ import os
 from aiohttp import web
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-OWNER_ID = int(os.getenv("OWNER_ID"))
+OWNER_ID = os.getenv("OWNER_ID")
+if not OWNER_ID:
+    raise RuntimeError("❌ OWNER_ID переменная окружения не установлена")
+OWNER_ID = int(OWNER_ID)
+
 PAID_USERS = set()
 
 # Все уроки
