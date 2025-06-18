@@ -9,7 +9,10 @@ OWNER_ID_ENV = os.getenv("OWNER_ID")
 RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
 PORT = int(os.getenv("PORT", 8080))
 
+
+
 # === Проверка и логирование переменных ===
+print("📡 Установка webhook:", webhook_url)
 print("✅ ENV BOT_TOKEN:", BOT_TOKEN[:10] + "..." if BOT_TOKEN else "❌ НЕ УСТАНОВЛЕН")
 print("✅ ENV OWNER_ID:", OWNER_ID_ENV or "❌ НЕ УСТАНОВЛЕН")
 print("✅ ENV RAILWAY_STATIC_URL:", RAILWAY_STATIC_URL or "❌ НЕ УСТАНОВЛЕН")
