@@ -12,20 +12,7 @@ PORT = int(os.getenv("PORT", 8080))
 
 
 
-# === Проверка и логирование переменных ===
 
-print("✅ ENV BOT_TOKEN:", BOT_TOKEN[:10] + "..." if BOT_TOKEN else "❌ НЕ УСТАНОВЛЕН")
-print("✅ ENV OWNER_ID:", OWNER_ID_ENV or "❌ НЕ УСТАНОВЛЕН")
-print("✅ ENV RAILWAY_STATIC_URL:", RAILWAY_STATIC_URL or "❌ НЕ УСТАНОВЛЕН")
-
-if not BOT_TOKEN:
-    raise RuntimeError("❌ BOT_TOKEN переменная окружения не установлена")
-
-if not OWNER_ID_ENV:
-    print("⚠️ OWNER_ID не установлен — бот не сможет отправлять уведомления админу")
-    OWNER_ID = 0
-else:
-    OWNER_ID = int(OWNER_ID_ENV)
 
 PAID_USERS = set()
 
