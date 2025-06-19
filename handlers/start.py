@@ -4,6 +4,11 @@ PAID_USERS = set()
 from handlers.menu import set_paid_users
 
 # === /start ===
+def set_paid_users(users_set):
+    global PAID_USERS
+    PAID_USERS = users_set
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
 
