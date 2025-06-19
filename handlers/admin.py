@@ -26,9 +26,9 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_id = int(context.args[0])
         print(f"👉 Добавляем ID {target_id} в Supabase")
 
-        await add_paid_user(target_id)  # 👈 await здесь
+        add_paid_user(target_id)  # ⬅️ убран await
 
-        updated_users = await fetch_all_paid_users()  # 👈 await здесь
+        updated_users = fetch_all_paid_users()  # ⬅️ убран await
         set_paid_users(updated_users)
         save_paid_users(updated_users)
 
@@ -70,9 +70,9 @@ async def revoke(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_id = int(context.args[0])
         print(f"🧹 Удаляем ID {target_id} из Supabase")
 
-        await remove_paid_user(target_id)  # 👈 await здесь
+        remove_paid_user(target_id)  # ⬅️ убран await
 
-        updated_users = await fetch_all_paid_users()  # 👈 await здесь
+        updated_users = fetch_all_paid_users()  # ⬅️ убран await
         set_paid_users(updated_users)
         save_paid_users(updated_users)
 
