@@ -14,7 +14,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"🧪 PAID_USERS = {PAID_USERS}")
     print(f"🧪 str(user_id) in PAID_USERS = {str(user_id) in PAID_USERS}")
 
-    if str(user_id) not in PAID_USERS:
+    if user_id not in PAID_USERS
         await update.message.reply_text("🔒 Доступно только после оплаты.")
         return
 
