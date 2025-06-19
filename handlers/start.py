@@ -1,6 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from handlers.menu import PAID_USERS, show_lessons_menu  # используем глобальный список
+PAID_USERS = set()
+from handlers.menu import set_paid_users
 
 # === /start ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
