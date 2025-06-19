@@ -7,6 +7,8 @@ from lessons_data import LESSONS
 from handlers.lessons import handle_step
 from handlers.payment import handle_payment_buttons
 from handlers.menu import menu, open_lesson, back_to_menu_handler
+from utils.access import load_paid_users, save_paid_users
+
 
 
 
@@ -17,7 +19,8 @@ OWNER_ID=5425101564
 RAILWAY_STATIC_URL="web-production-c31c.up.railway.app"
 
 PORT = int(os.getenv("PORT", 8080))
-PAID_USERS = set()
+PAID_USERS = load_paid_users()
+
 
 # === КНОПКИ ===
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
