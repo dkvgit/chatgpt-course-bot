@@ -1,6 +1,8 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from aiohttp import web
 
 # handlers
@@ -17,11 +19,11 @@ from utils.access import load_paid_users, save_paid_users
 
 
 # === Переменные окружения ===
-BOT_TOKEN="7927577300:AAGM-KTDK3eAx8sS59fWaEKCF4ZZYtNgI18"
-OWNER_ID=5425101564
-RAILWAY_STATIC_URL="web-production-c31c.up.railway.app"
-
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+OWNER_ID = int(os.getenv("OWNER_ID"))
+RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
 PORT = int(os.getenv("PORT", 8080))
+
 PAID_USERS = load_paid_users()
 
 
