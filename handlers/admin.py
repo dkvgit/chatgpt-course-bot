@@ -2,16 +2,17 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from utils.access import save_paid_users
 
-PAID_USERS = None  # Глобальная переменная, будет передана из main.py
-OWNER_ID = 5425101564  # Можно заменить на os.getenv если хочешь
+PAID_USERS = None
+OWNER_ID = 5425101564
 
-# Функция для передачи PAID_USERS из main.py
 def set_paid_users(users_set):
     global PAID_USERS
     PAID_USERS = users_set
 
-# Команда /grant <user_id>
 async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("🛠 grant() ЗАПУЩЕН")  # <--- сюда
+    print("PAID_USERS =", PAID_USERS)  # <--- и сюда
+
     if update.message.from_user.id != OWNER_ID:
         await update.message.reply_text("⛔️ У тебя нет прав на выполнение этой команды.")
         return
