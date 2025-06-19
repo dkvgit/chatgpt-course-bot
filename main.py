@@ -12,6 +12,8 @@ from handlers.payment import handle_payment_buttons
 from handlers.menu import menu, open_lesson, back_to_menu_handler
 from handlers.admin import grant  # ⬅️ вот он
 from lessons_data import LESSONS
+from handlers.menu import show_program  # или from handlers.info
+
     
 
 # utils
@@ -96,6 +98,8 @@ application.add_handler(CallbackQueryHandler(handle_payment_buttons, pattern="^(
 application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
 application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
 application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
+application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
+
 
 # === aiohttp сервер Railway ===
 web_app = web.Application()
