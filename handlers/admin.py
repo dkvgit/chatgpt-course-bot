@@ -1,8 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from utils.access import save_paid_users
-from utils.supabase_db import add_paid_user, fetch_all_paid_users
-from utils.supabase_db import remove_paid_user  # 👈 добавь в импорты
+from utils.supabase_db import add_paid_user, fetch_all_paid_users, remove_paid_user
 
 PAID_USERS = None
 OWNER_ID = 5425101564
@@ -27,17 +26,14 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_id = int(context.args[0])
         print(f"👉 Добавляем ID {target_id} в Supabase")
 
-        # ➕ Добавляем в Supabase
-        add_paid_user(target_id)
+        await add_paid_user(target_id)  # 👈 await здесь
 
-        # 🔄 Загружаем обновлённый список
-        updated_users = fetch_all_paid_users()
+        updated_users = await fetch_all_paid_users()  # 👈 await здесь
         set_paid_users(updated_users)
         save_paid_users(updated_users)
 
         print(f"✅ Обновлённый PAID_USERS: {updated_users}")
 
-        # 📂 Лог содержимого файла
         try:
             with open("paid_users.json") as f:
                 print("📂 paid_users.json =", f.read())
@@ -74,11 +70,9 @@ async def revoke(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_id = int(context.args[0])
         print(f"🧹 Удаляем ID {target_id} из Supabase")
 
-        # ❌ Удаляем из Supabase
-        remove_paid_user(target_id)
+        await remove_paid_user(target_id)  # 👈 await здесь
 
-        # 🔄 Обновляем кэш
-        updated_users = fetch_all_paid_users()
+        updated_users = await fetch_all_paid_users()  # 👈 await здесь
         set_paid_users(updated_users)
         save_paid_users(updated_users)
 
@@ -102,4 +96,3 @@ async def list_paid(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"📋 Список пользователей с доступом:\n\n{user_list}",
         parse_mode="Markdown"
     )
-
