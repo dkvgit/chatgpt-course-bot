@@ -1,9 +1,8 @@
 # utils/supabase_db.py
+
 import os
 from supabase import create_client
 from supabase.lib.client_options import ClientOptions
-
-
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
