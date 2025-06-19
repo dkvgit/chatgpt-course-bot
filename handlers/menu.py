@@ -1,4 +1,4 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes
 from lessons_data import LESSONS
 
@@ -62,3 +62,14 @@ async def show_next_lesson_options(context, chat_id, current_lesson_key):
     ])
 
     await context.bot.send_message(chat_id=chat_id, text="Перейти к следующему?", reply_markup=InlineKeyboardMarkup(buttons))
+
+# ⬇️ новая функция
+async def show_program(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    text = "📚 Вот программа курса:\n\n"
+    for lesson in LESSONS.values():
+        text += f"• {lesson['title']}\n"
+
+    await query.message.reply_text(text)
