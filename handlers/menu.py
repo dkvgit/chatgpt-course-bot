@@ -12,7 +12,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     print(f"🧪 user_id = {user_id}")
     print(f"🧪 PAID_USERS = {PAID_USERS}")
-    print(f"🧪 str(user_id) in PAID_USERS = {str(user_id) in PAID_USERS}")
+    print(f"🧪 user_id in PAID_USERS = {user_id in PAID_USERS}")
 
     if user_id not in PAID_USERS:
         await update.message.reply_text("🔒 Доступно только после оплаты.")
@@ -26,7 +26,7 @@ async def open_lesson(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = query.from_user.id
     await query.answer()
 
-    if str(user_id) not in PAID_USERS:
+    if user_id not in PAID_USERS:
         await query.edit_message_text("🔒 Уроки доступны только после оплаты.")
         return
 
@@ -42,7 +42,7 @@ async def back_to_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = query.from_user.id
     await query.answer()
 
-    if str(user_id) not in PAID_USERS:
+    if user_id not in PAID_USERS:
         await query.edit_message_text("🔒 Уроки доступны только после оплаты.")
         return
 
