@@ -1,47 +1,37 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from utils.access import load_paid_users
-from handlers.menu import show_lessons_menu
+from handlers.menu import PAID_USERS, show_lessons_menu  # используем глобальный список
 
-# Загружаем платных пользователей (если не передаёшь из main.py)
-PAID_USERS = load_paid_users()
-
-# === START ===
+# === /start ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
 
-    # 🔐 Если уже платный — сразу в меню
+    # 🔐 Если пользователь с доступом — показываем отдельную кнопку
     if user_id in PAID_USERS:
         await update.message.reply_text(
-            "✅ У тебя уже есть доступ ко всем урокам! Открываю меню 👇"
+            "✅ У тебя уже есть доступ ко всем урокам! 👇",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("📚 Перейти к урокам", callback_data="go_paid_menu")]
+            ])
         )
-        await show_lessons_menu(context, update.message.chat.id)
         return
 
-    # Получаем параметр запуска
+    # Получаем параметр запуска, если был
     args = context.args
     source = args[0] if args else "direct"
 
-    # Отслеживаем источники переходов
-    if source == "landing":
-        print(f"👤 Пользователь {user_id} пришел с лендинга")
-        welcome_text = "👋 Добро пожаловать с нашего сайта в мини-курс «Нейросети без паники»!\n\n"
-    elif source == "program":
-        print(f"👤 Пользователь {user_id} пришел из программы курса")
-        welcome_text = "👋 Отлично! Вы изучили программу и готовы начать мини-курс «Нейросети без паники»!\n\n"
-    elif source == "webapp":
-        print(f"👤 Пользователь {user_id} пришел из WebApp")
-        welcome_text = "👋 Добро пожаловать в мини-курс «Нейросети без паники»!\n\n"
-    else:
-        print(f"👤 Пользователь {user_id} запустил бота напрямую")
-        welcome_text = "👋 Добро пожаловать в мини-курс «Нейросети без паники»!\n\n"
-
-    # Сохраняем в user_data
+    print(f"👤 Пользователь {user_id} запустил бота через: {source}")
     context.user_data["step"] = 0
     context.user_data["source"] = source
 
+    # Сообщение для новичков
+    welcome_text = (
+        "👋 Добро пожаловать в мини-курс «Нейросети без паники»!\n\n"
+        "Ты можешь сразу начать бесплатно, купить доступ или посмотреть программу."
+    )
+
     await update.message.reply_text(
-        welcome_text + "Ты можешь сразу начать бесплатно, купить доступ или посмотреть программу.",
+        welcome_text,
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("👉 Начать бесплатно", callback_data="step_0")],
             [InlineKeyboardButton("📚 Программа курса", callback_data="show_program")],
