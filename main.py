@@ -35,14 +35,15 @@ from utils.access import load_paid_users, save_paid_users
 from lessons_data import LESSONS
 
 # === Загрузка платных пользователей
-PAID_USERS = load_paid_users()
+
 from handlers.menu import set_paid_users as set_menu_paid_users
 from handlers.admin import set_paid_users as set_admin_paid_users
+from utils.access import load_paid_users
+
+PAID_USERS = load_paid_users()
 
 set_menu_paid_users(PAID_USERS)
 set_admin_paid_users(PAID_USERS)
-
-set_paid_users(PAID_USERS)
 
 
 # === Обработчики ===
