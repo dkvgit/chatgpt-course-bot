@@ -209,7 +209,8 @@ application.add_handler(CommandHandler("menu", menu))
 application.add_handler(CommandHandler("myid", my_id))
 application.add_handler(CommandHandler("grant", grant))
 application.add_handler(MessageHandler(filters.VIDEO, get_file_id))
-application.add_handler(CallbackQueryHandler(button_handler, pattern="^(step_.*|buy|paid|not_ready)$"))
+application.add_handler(CallbackQueryHandler(handle_step, pattern="^step_.*$"))  # step_0, step_1, step_2
+application.add_handler(CallbackQueryHandler(button_handler, pattern="^(buy|paid|not_ready)$"))  # остальное
 application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
 application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
 application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
