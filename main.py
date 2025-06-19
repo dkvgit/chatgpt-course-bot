@@ -23,31 +23,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = query.from_user.id
     await query.answer()
 
-    if query.data == "buy":
-        await context.bot.send_message(chat_id=query.message.chat.id,
-            text="💳 Выберите удобный способ оплаты мини-курса (500₽):", reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Revolut", url="https://revolut.me/r/hJG50OBCC4")],
-                    [InlineKeyboardButton("🔁 Я оплатил — проверить доступ", callback_data="paid")]]))
-
-    elif query.data == "paid":
-        if user_id in PAID_USERS:
-            await context.bot.send_message(chat_id=query.message.chat.id,
-                text="✅ У тебя уже есть доступ ко всем урокам.")
-            await show_lessons_menu(context, query.message.chat.id)
-        else:
-            await context.bot.send_message(chat_id=query.message.chat.id,
-                text="🕐 Заявка на доступ отправлена. Проверка оплаты может занять до 10 минут.\n\n"
-                     "Если ты уже оплатил, напиши свой ник или ID в личку: @dekavetel")
-            username = query.from_user.username or "не указан"
-            await context.bot.send_message(chat_id=OWNER_ID,
-                text=f"🔔 Новый запрос на доступ от пользователя @{username} (ID: {user_id})")
-
-    elif query.data == "not_ready":
-        await context.bot.send_message(chat_id=query.message.chat.id,
-            text="Понимаю! Когда будешь готов, просто напиши /start и пройди к предложению о покупке.\n\nСпасибо за внимание к курсу! 😊")
-
-
-
+    
 # === Функция для показа меню уроков ===
 async def show_lessons_menu(context, chat_id):
     buttons = []
