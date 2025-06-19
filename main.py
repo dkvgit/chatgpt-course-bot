@@ -40,6 +40,8 @@ from handlers.menu import set_paid_users as set_menu_paid_users
 from handlers.admin import set_paid_users as set_admin_paid_users
 from utils.access import load_paid_users
 from handlers.admin import grant, revoke  # 👈 добавь revoke
+from handlers.admin import grant, revoke, list_paid
+
 
 PAID_USERS = load_paid_users()
 
@@ -105,6 +107,7 @@ application.add_handler(CommandHandler("myid", my_id))
 application.add_handler(CommandHandler("grant", grant))
 application.add_handler(CommandHandler("revoke", revoke))  # 👈 добавь эту строку
 application.add_handler(MessageHandler(filters.VIDEO, get_file_id))
+application.add_handler(CommandHandler("list_paid", list_paid))
 
 application.add_handler(CallbackQueryHandler(handle_step, pattern="^step_.*$"))
 application.add_handler(CallbackQueryHandler(handle_payment_buttons, pattern="^(buy|paid|not_ready)$"))
