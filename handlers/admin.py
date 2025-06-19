@@ -3,6 +3,8 @@ from telegram.ext import ContextTypes
 from utils.access import save_paid_users
 from utils.supabase_db import add_paid_user, fetch_all_paid_users, remove_paid_user
 from handlers.menu import set_paid_users as set_menu_paid_users  # 👈 важно!
+from handlers.start import set_paid_users as set_start_paid_users
+
 
 PAID_USERS = None
 OWNER_ID = 5425101564
@@ -32,6 +34,7 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
         updated_users = fetch_all_paid_users()
         set_paid_users(updated_users)          # обновление в admin.py
         set_menu_paid_users(updated_users)     # ⬅️ обновление в menu.py
+        set_start_paid_users(updated_users)
         save_paid_users(updated_users)
 
         print(f"✅ Обновлённый PAID_USERS: {updated_users}")
