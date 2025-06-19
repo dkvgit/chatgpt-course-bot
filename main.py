@@ -3,6 +3,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 import os
 from aiohttp import web
 from handlers.start import start
+from lessons_data import LESSONS
+
 
 # === Переменные окружения ===
 BOT_TOKEN="7927577300:AAGM-KTDK3eAx8sS59fWaEKCF4ZZYtNgI18"
