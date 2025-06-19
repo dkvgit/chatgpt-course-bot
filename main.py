@@ -12,7 +12,7 @@ from handlers.payment import handle_payment_buttons
 from handlers.menu import menu, open_lesson, back_to_menu_handler
 from handlers.admin import grant  # ⬅️ вот он
 from lessons_data import LESSONS
-from handlers.menu import show_program  # или from handlers.info
+from handlers.info import show_program
 
     
 
@@ -29,11 +29,7 @@ PORT = int(os.getenv("PORT", 8080))
 PAID_USERS = load_paid_users()
 
 
-# === КНОПКИ ===
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    user_id = query.from_user.id
-    await query.answer()
+
 
 
 # === Получение file_id (только для админа) ===
