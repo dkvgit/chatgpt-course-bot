@@ -5,6 +5,7 @@ from aiohttp import web
 from handlers.start import start
 from lessons_data import LESSONS
 from handlers.lessons import handle_step
+from handlers.payment import handle_payment_buttons
 
 
 
@@ -206,7 +207,7 @@ application.add_handler(CommandHandler("myid", my_id))
 application.add_handler(CommandHandler("grant", grant))
 application.add_handler(MessageHandler(filters.VIDEO, get_file_id))
 application.add_handler(CallbackQueryHandler(handle_step, pattern="^step_.*$"))  # step_0, step_1, step_2
-application.add_handler(CallbackQueryHandler(button_handler, pattern="^(buy|paid|not_ready)$"))  # остальное
+application.add_handler(CallbackQueryHandler(handle_payment_buttons, pattern="^(buy|paid|not_ready)$"))
 application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
 application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
 application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
