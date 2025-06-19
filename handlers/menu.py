@@ -10,10 +10,16 @@ def set_paid_users(users_set):
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
+    print(f"🧪 user_id = {user_id}")
+    print(f"🧪 PAID_USERS = {PAID_USERS}")
+    print(f"🧪 str(user_id) in PAID_USERS = {str(user_id) in PAID_USERS}")
+
     if str(user_id) not in PAID_USERS:
         await update.message.reply_text("🔒 Доступно только после оплаты.")
         return
+
     await show_lessons_menu(context, update.message.chat.id)
+
 
 async def open_lesson(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
