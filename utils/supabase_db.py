@@ -22,3 +22,13 @@ def fetch_all_paid_users() -> set:
     except Exception as e:
         print("⚠️ Ошибка при получении пользователей из Supabase:", e)
         return set()
+
+
+# ❌ Удаление пользователя из базы
+def remove_paid_user(user_id: int):
+    try:
+        response = supabase.table("paid_users").delete().eq("user_id", user_id).execute()
+        return response
+    except Exception as e:
+        print("⚠️ Ошибка при удалении пользователя из Supabase:", e)
+
