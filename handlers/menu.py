@@ -2,7 +2,12 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes
 from lessons_data import LESSONS
 
-PAID_USERS = set()  # пока временно, потом передадим из main.py
+PAID_USERS = None
+
+def set_paid_users(users_set):
+    global PAID_USERS
+    PAID_USERS = users_set
+
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
