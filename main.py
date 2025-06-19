@@ -6,6 +6,8 @@ from handlers.start import start
 from lessons_data import LESSONS
 from handlers.lessons import handle_step
 from handlers.payment import handle_payment_buttons
+from handlers.menu import menu, open_lesson, back_to_menu_handler
+
 
 
 
@@ -22,85 +24,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     user_id = query.from_user.id
     await query.answer()
-
-    
-# === Функция для показа меню уроков ===
-async def show_lessons_menu(context, chat_id):
-    buttons = []
-    for key, lesson in LESSONS.items():
-        if key.startswith("lesson_"):
-            buttons.append([InlineKeyboardButton(lesson["title"], callback_data=f"menu_{key}")])
-
-    await context.bot.send_message(chat_id=chat_id, text="📚 Выбери урок:", reply_markup=InlineKeyboardMarkup(buttons))
-
-
-# === /menu для платных пользователей ===
-async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.message.from_user.id
-    if user_id not in PAID_USERS:
-        await update.message.reply_text("🔒 Доступно только после оплаты. Напиши /start, чтобы пройти бесплатные уроки.")
-        return
-
-    await show_lessons_menu(context, update.message.chat.id)
-
-
-# === Открытие любого платного урока ===
-async def open_lesson(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    user_id = query.from_user.id
-    await query.answer()
-
-    if user_id not in PAID_USERS:
-        await query.edit_message_text("🔒 Уроки доступны только после оплаты.")
-        return
-
-    key = query.data.replace("menu_", "")
-    lesson = LESSONS.get(key)
-    if lesson:
-        await context.bot.send_video(chat_id=query.message.chat.id, video=lesson["file_id"], caption=lesson['title'])
-
-        # Сохраняем текущий урок в user_data
-        context.user_data["current_lesson"] = key
-
-        # Показываем кнопки
-        await show_next_lesson_options(context, query.message.chat.id, key)
-
-
-# === Функция для показа опций после урока ===
-async def show_next_lesson_options(context, chat_id, current_lesson_key):
-    current_num = int(current_lesson_key.split('_')[1])
-    next_num = current_num + 1
-    next_lesson_key = f"lesson_{next_num}"
-
-    buttons = []
-
-    if next_lesson_key in LESSONS:
-        next_title = LESSONS[next_lesson_key]["title"]
-        buttons.append([InlineKeyboardButton(f"▶️ {next_title}", callback_data=f"menu_{next_lesson_key}")])
-
-    buttons.append([InlineKeyboardButton("📚 Все уроки", callback_data="back_to_menu"),
-        InlineKeyboardButton("🏠 В начало", callback_data="go_home")])
-
-    await context.bot.send_message(chat_id=chat_id, text="Перейти к следующему?",
-        reply_markup=InlineKeyboardMarkup(buttons))
-
-
-# === Обработчик для кнопки "Все уроки" ===
-async def back_to_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    user_id = query.from_user.id
-    await query.answer()
-
-    if user_id not in PAID_USERS:
-        await query.edit_message_text("🔒 Доступно только после оплаты.")
-        return
-
-    buttons = []
-    for key, lesson in LESSONS.items():
-        if key.startswith("lesson_"):
-            buttons.append([InlineKeyboardButton(lesson["title"], callback_data=f"menu_{key}")])
-
-    await query.edit_message_text("📚 Выбери урок:", reply_markup=InlineKeyboardMarkup(buttons))
 
 
 # === Получение file_id (только для админа) ===
