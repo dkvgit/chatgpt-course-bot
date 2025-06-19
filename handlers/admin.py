@@ -79,6 +79,7 @@ async def revoke(update: Update, context: ContextTypes.DEFAULT_TYPE):
         updated_users = fetch_all_paid_users()
         set_paid_users(updated_users)
         set_menu_paid_users(updated_users)  # ⬅️ важно!
+        set_start_paid_users(updated_users)  # ⬅️ и здесь тоже
         save_paid_users(updated_users)
 
         await update.message.reply_text(f"❌ Доступ удалён у пользователя {target_id}")
