@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 from aiohttp import web
@@ -20,8 +19,8 @@ OWNER_ID = int(os.getenv("OWNER_ID"))
 RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
 PORT = int(os.getenv("PORT", 8080))
 
-# === Импорты
-from handlers.start import start
+# === Импорты ===
+from handlers.start import start, set_paid_users as set_start_paid_users
 from handlers.lessons import handle_step
 from handlers.payment import handle_payment_buttons
 from handlers.menu import (
@@ -32,22 +31,14 @@ from handlers.menu import (
 )
 from handlers.admin import grant, revoke, list_paid, set_paid_users as set_admin_paid_users
 from handlers.info import show_program
-from utils.access import load_paid_users, save_paid_users
+from utils.access import load_paid_users
 from lessons_data import LESSONS
-from handlers.start import set_paid_users as set_start_paid_users
-
-PAID_USERS = load_paid_users()
-
-# Обновляем для всех
-set_menu_paid_users(PAID_USERS)
-set_admin_paid_users(PAID_USERS)
-set_start_paid_users(PAID_USERS)  # 👈 ВАЖНО
-
 
 # === Загрузка платных пользователей ===
 PAID_USERS = load_paid_users()
 set_menu_paid_users(PAID_USERS)
 set_admin_paid_users(PAID_USERS)
+set_start_paid_users(PAID_USERS)
 
 # === Обработчики ===
 
@@ -76,7 +67,7 @@ async def go_home(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def my_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"👤 Твой user_id: {update.message.from_user.id}")
 
-# === Webhook + старт
+# === Webhook + старт ===
 
 async def handle_webhook(request):
     data = await request.json()
@@ -94,7 +85,7 @@ async def on_startup(app):
 async def root(request):
     return web.Response(text="🤖 Бот работает")
 
-# === Запуск приложения Telegram
+# === Запуск приложения Telegram ===
 application = ApplicationBuilder().token(BOT_TOKEN).build()
 
 application.add_handler(CommandHandler("start", start))
@@ -105,7 +96,6 @@ application.add_handler(CommandHandler("revoke", revoke))
 application.add_handler(CommandHandler("list_paid", list_paid))
 application.add_handler(MessageHandler(filters.VIDEO, get_file_id))
 application.add_handler(CallbackQueryHandler(menu, pattern="^go_paid_menu$"))
-
 application.add_handler(CallbackQueryHandler(handle_step, pattern="^step_.*$"))
 application.add_handler(CallbackQueryHandler(handle_payment_buttons, pattern="^(buy|paid|not_ready)$"))
 application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
@@ -113,7 +103,7 @@ application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_
 application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
 application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
-# === Запуск aiohttp-сервера
+# === Запуск aiohttp-сервера ===
 web_app = web.Application()
 web_app.router.add_post(f"/{BOT_TOKEN}", handle_webhook)
 web_app.router.add_get("/", root)
