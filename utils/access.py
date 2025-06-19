@@ -17,7 +17,9 @@ def load_paid_users():
 # Сохраняем в файл
 def save_paid_users(user_ids: set):
     try:
-        with open(PAID_USERS_FILE, "w") as f:
+        with open("paid_users.json", "w") as f:
             json.dump(list(user_ids), f)
+        print("💾 paid_users.json успешно сохранён")
     except Exception as e:
         print("⚠️ Ошибка при сохранении paid_users.json:", e)
+
