@@ -8,6 +8,10 @@ from handlers.lessons import handle_step
 from handlers.payment import handle_payment_buttons
 from handlers.menu import menu, open_lesson, back_to_menu_handler
 from utils.access import load_paid_users, save_paid_users
+from handlers.admin import grant
+from utils.access import load_paid_users
+
+
 
 
 
