@@ -38,9 +38,8 @@ from lessons_data import LESSONS
 
 from handlers.menu import set_paid_users as set_menu_paid_users
 from handlers.admin import set_paid_users as set_admin_paid_users
-from utils.access import load_paid_users
-from handlers.admin import grant, revoke  # 👈 добавь revoke
-from handlers.admin import grant, revoke, list_paid
+from handlers.admin import grant, revoke, list_paid, set_paid_users as set_admin_paid_users
+
 
 
 PAID_USERS = load_paid_users()
