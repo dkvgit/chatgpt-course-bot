@@ -13,6 +13,9 @@ from handlers.menu import menu, open_lesson, back_to_menu_handler
 from handlers.admin import grant  # ⬅️ вот он
 from lessons_data import LESSONS
 from handlers.info import show_program
+from handlers.menu import set_paid_users
+set_paid_users(PAID_USERS)
+
 
     
 
