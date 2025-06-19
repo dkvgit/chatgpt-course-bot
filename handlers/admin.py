@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from utils.access import save_paid_users
 from utils.supabase_db import add_paid_user, fetch_all_paid_users, remove_paid_user
+from handlers.menu import set_paid_users as set_menu_paid_users  # 👈 важно!
 
 PAID_USERS = None
 OWNER_ID = 5425101564
@@ -26,10 +27,11 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_id = int(context.args[0])
         print(f"👉 Добавляем ID {target_id} в Supabase")
 
-        add_paid_user(target_id)  # ⬅️ убран await
+        add_paid_user(target_id)  # ⬅️ синхронно
 
-        updated_users = fetch_all_paid_users()  # ⬅️ убран await
-        set_paid_users(updated_users)
+        updated_users = fetch_all_paid_users()
+        set_paid_users(updated_users)          # обновление в admin.py
+        set_menu_paid_users(updated_users)     # ⬅️ обновление в menu.py
         save_paid_users(updated_users)
 
         print(f"✅ Обновлённый PAID_USERS: {updated_users}")
@@ -53,7 +55,6 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"⚠️ Ошибка: {e}")
 
-
 async def revoke(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print("🛠 revoke() ЗАПУЩЕН")
     print("PAID_USERS =", PAID_USERS)
@@ -70,17 +71,17 @@ async def revoke(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_id = int(context.args[0])
         print(f"🧹 Удаляем ID {target_id} из Supabase")
 
-        remove_paid_user(target_id)  # ⬅️ убран await
+        remove_paid_user(target_id)
 
-        updated_users = fetch_all_paid_users()  # ⬅️ убран await
+        updated_users = fetch_all_paid_users()
         set_paid_users(updated_users)
+        set_menu_paid_users(updated_users)  # ⬅️ важно!
         save_paid_users(updated_users)
 
         await update.message.reply_text(f"❌ Доступ удалён у пользователя {target_id}")
 
     except Exception as e:
         await update.message.reply_text(f"⚠️ Ошибка: {e}")
-
 
 async def list_paid(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.from_user.id != OWNER_ID:
