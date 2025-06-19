@@ -34,6 +34,15 @@ from handlers.admin import grant, revoke, list_paid, set_paid_users as set_admin
 from handlers.info import show_program
 from utils.access import load_paid_users, save_paid_users
 from lessons_data import LESSONS
+from handlers.start import set_paid_users as set_start_paid_users
+
+PAID_USERS = load_paid_users()
+
+# Обновляем для всех
+set_menu_paid_users(PAID_USERS)
+set_admin_paid_users(PAID_USERS)
+set_start_paid_users(PAID_USERS)  # 👈 ВАЖНО
+
 
 # === Загрузка платных пользователей ===
 PAID_USERS = load_paid_users()
