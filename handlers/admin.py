@@ -86,3 +86,20 @@ async def revoke(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         await update.message.reply_text(f"⚠️ Ошибка: {e}")
+
+
+async def list_paid(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message.from_user.id != OWNER_ID:
+        await update.message.reply_text("⛔️ У тебя нет прав на выполнение этой команды.")
+        return
+
+    if not PAID_USERS:
+        await update.message.reply_text("🤷 Пока нет ни одного пользователя с доступом.")
+        return
+
+    user_list = "\n".join(f"• `{uid}`" for uid in sorted(PAID_USERS))
+    await update.message.reply_text(
+        f"📋 Список пользователей с доступом:\n\n{user_list}",
+        parse_mode="Markdown"
+    )
+
