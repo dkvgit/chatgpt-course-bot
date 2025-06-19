@@ -26,6 +26,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["source"] = source  # Сохраняем источник для аналитики
 
     await update.message.reply_text(
-        welcome_text + "Ты можешь сразу начать бесплатно или купить полный доступ ко всем урокам.",
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("👉 Начать бесплатно", callback_data="step_0")],
-            [InlineKeyboardButton("💳 Сразу оплатить", callback_data="buy")]]))
+    welcome_text + "Ты можешь сразу начать бесплатно, купить доступ или посмотреть программу.",
+    reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton("👉 Начать бесплатно", callback_data="step_0")],
+        [InlineKeyboardButton("📚 Программа курса", callback_data="show_program")],
+        [InlineKeyboardButton("💳 Сразу оплатить", callback_data="buy")]
+    ])
+)
+
