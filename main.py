@@ -65,29 +65,7 @@ async def my_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"👤 Твой user_id: {update.message.from_user.id}")
 
 
-# === Выдача доступа (только для админа) ===
-async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.from_user.id != OWNER_ID:
-        return
 
-    if not context.args:
-        await update.message.reply_text("⚠️ Укажите ID пользователя: /grant 12345678")
-        return
-
-    try:
-        target_id = int(context.args[0])
-        PAID_USERS.add(target_id)
-
-        # Логируем выдачу доступа
-        print(f"💰 Админ выдал доступ пользователю {target_id}")
-
-        await update.message.reply_text(f"✅ Доступ выдан пользователю {target_id}")
-        await context.bot.send_message(chat_id=target_id,
-            text="✅ Спасибо! Доступ к полному курсу открыт. Напиши /menu чтобы продолжить.")
-    except (ValueError, IndexError):
-        await update.message.reply_text("⚠️ Неверный ID или ошибка.")
-    except Exception as e:
-        await update.message.reply_text(f"⚠️ Ошибка при отправке уведомления пользователю: {e}")
         
 
 # === ЗАПУСК ===
