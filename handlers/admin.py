@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from utils.access import save_paid_users
 from utils.supabase_db import add_paid_user, fetch_all_paid_users
+from utils.supabase_db import remove_paid_user  # 👈 добавь в импорты
 
 PAID_USERS = None
 OWNER_ID = 5425101564
@@ -52,6 +53,36 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         except Exception as e:
             await update.message.reply_text(f"⚠️ Доступ выдан, но не удалось отправить сообщение пользователю: {e}")
+
+    except Exception as e:
+        await update.message.reply_text(f"⚠️ Ошибка: {e}")
+
+
+async def revoke(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("🛠 revoke() ЗАПУЩЕН")
+    print("PAID_USERS =", PAID_USERS)
+
+    if update.message.from_user.id != OWNER_ID:
+        await update.message.reply_text("⛔️ У тебя нет прав на выполнение этой команды.")
+        return
+
+    if not context.args:
+        await update.message.reply_text("⚠️ Укажите ID пользователя: /revoke 12345678")
+        return
+
+    try:
+        target_id = int(context.args[0])
+        print(f"🧹 Удаляем ID {target_id} из Supabase")
+
+        # ❌ Удаляем из Supabase
+        remove_paid_user(target_id)
+
+        # 🔄 Обновляем кэш
+        updated_users = fetch_all_paid_users()
+        set_paid_users(updated_users)
+        save_paid_users(updated_users)
+
+        await update.message.reply_text(f"❌ Доступ удалён у пользователя {target_id}")
 
     except Exception as e:
         await update.message.reply_text(f"⚠️ Ошибка: {e}")
