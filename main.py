@@ -1,6 +1,3 @@
-print("🛠 grant() ЗАПУЩЕН")
-print("PAID_USERS =", PAID_USERS)
-
 import os
 from dotenv import load_dotenv
 from aiohttp import web
