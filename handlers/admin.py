@@ -21,6 +21,14 @@ async def grant(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("⚠️ Укажите ID пользователя: /grant 12345678")
         return
 
+        try:
+        target_id = int(context.args[0])
+        print(f"👉 Добавляем ID {target_id} в PAID_USERS")
+        PAID_USERS.add(target_id)
+        print(f"✅ Теперь PAID_USERS: {PAID_USERS}")
+        save_paid_users(PAID_USERS)
+
+
     try:
         target_id = int(context.args[0])
         PAID_USERS.add(target_id)
