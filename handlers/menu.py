@@ -8,7 +8,6 @@ def set_paid_users(users_set):
     global PAID_USERS
     PAID_USERS = users_set
 
-
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     if user_id not in PAID_USERS:
@@ -68,7 +67,6 @@ async def show_next_lesson_options(context, chat_id, current_lesson_key):
 
     await context.bot.send_message(chat_id=chat_id, text="Перейти к следующему?", reply_markup=InlineKeyboardMarkup(buttons))
 
-# ⬇️ новая функция
 async def show_program(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
