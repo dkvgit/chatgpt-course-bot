@@ -85,6 +85,18 @@ async def on_startup(app):
 async def root(request):
     return web.Response(text="🤖 Бот работает")
 
+async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    user_id = query.from_user.id
+    await query.answer()
+
+    if user_id not in PAID_USERS:
+        await query.edit_message_text("🔒 Доступно только после оплаты.")
+        return
+
+    await show_lessons_menu(context, query.message.chat.id)
+
+
 # === Запуск приложения Telegram ===
 application = ApplicationBuilder().token(BOT_TOKEN).build()
 
@@ -102,6 +114,8 @@ application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
 application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
 application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
 application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
+application.add_handler(CallbackQueryHandler(go_paid_menu_handler, pattern="^go_paid_menu$"))
+
 
 # === Запуск aiohttp-сервера ===
 web_app = web.Application()
