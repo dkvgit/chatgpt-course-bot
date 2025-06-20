@@ -1,4 +1,2 @@
-python-telegram-bot==20.7
-aiohttp>=3.8.1
+python-telegram-bot
 python-dotenv
-supabase==2.15.3
