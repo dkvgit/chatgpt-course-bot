@@ -1,5 +1,5 @@
 import os
-from handlers.info import show_program, show_lessons_menu
+
 
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
