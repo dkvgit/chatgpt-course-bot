@@ -107,9 +107,10 @@ def main():
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
     # === Запуск ===
-    FORCE_POLLING = os.environ.get('FORCE_POLLING', 'false').lower() == 'true'
+  
+FORCE_POLLING = True  # Принудительно включаем polling
 
-    if FORCE_POLLING or not WEBHOOK_URL:
+if FORCE_POLLING or not WEBHOOK_URL:
         print("🚀 Принудительный запуск через polling...")
         application.run_polling()
     else:
