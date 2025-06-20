@@ -1,6 +1,4 @@
 import os
-
-
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -17,7 +15,9 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
-PORT = int(os.environ.get('PORT', 8000))  # Railway предоставляет PORT
+PORT = int(os.environ.get('PORT', 8000))
+
+# Получаем URL от Railway
 RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
 if RAILWAY_STATIC_URL:
     WEBHOOK_URL = RAILWAY_STATIC_URL + '/webhook'
@@ -82,13 +82,13 @@ async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYP
 
     await show_lessons_menu(context, query.message.chat.id)
 
-# === Webhook обработчик ===
-async def webhook(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработчик для webhook"""
-    pass
-
 # === Настройка приложения ===
 def main():
+    print(f"🔧 BOT_TOKEN: {'✅' if BOT_TOKEN else '❌'}")
+    print(f"🔧 PORT: {PORT}")
+    print(f"🔧 RAILWAY_STATIC_URL: {RAILWAY_STATIC_URL or 'НЕТ'}")
+    print(f"🔧 WEBHOOK_URL: {WEBHOOK_URL or 'НЕТ'}")
+    
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
@@ -106,14 +106,13 @@ def main():
     application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
-    # === Настройка webhook ===
+    # === Запуск ===
     if WEBHOOK_URL:
         print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
         application.run_webhook(
             listen="0.0.0.0",
             port=PORT,
             webhook_url=WEBHOOK_URL,
-            secret_token="your_secret_token_here"  # Замените на свой секретный токен
         )
     else:
         print("🚀 Локальный запуск через polling...")
