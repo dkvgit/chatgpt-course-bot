@@ -108,12 +108,14 @@ def main():
 
     # === Запуск ===
     if WEBHOOK_URL:
-        print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
-        application.run_webhook(
-            listen="0.0.0.0",
-            port=PORT,
-            webhook_url=WEBHOOK_URL,
-        )
+    print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
+    # Принудительно устанавливаем webhook
+    await application.bot.set_webhook(url=WEBHOOK_URL)
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        webhook_url=WEBHOOK_URL,
+    )
     else:
         print("🚀 Локальный запуск через polling...")
         application.run_polling()
