@@ -1,4 +1,6 @@
 import os
+from handlers.info import show_program, show_lessons_menu
+
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -15,8 +17,12 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
-PORT = int(os.environ.get('PORT', 8000))
-WEBHOOK_URL = os.environ.get('RAILWAY_STATIC_URL', '') + '/webhook'
+PORT = int(os.environ.get('PORT', 8000))  # Railway предоставляет PORT
+RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
+if RAILWAY_STATIC_URL:
+    WEBHOOK_URL = RAILWAY_STATIC_URL + '/webhook'
+else:
+    WEBHOOK_URL = None
 
 # === Импорты ===
 from handlers.start import start, set_paid_users as set_start_paid_users
@@ -29,9 +35,8 @@ from handlers.menu import (
     set_paid_users as set_menu_paid_users,
 )
 from handlers.admin import grant, revoke, list_paid, set_paid_users as set_admin_paid_users
-from handlers.info import show_program
+from handlers.info import show_program, show_lessons_menu
 from utils.supabase_db import fetch_all_paid_users
-from lessons_data import LESSONS
 
 # === Загрузка платных пользователей ===
 PAID_USERS = fetch_all_paid_users()
@@ -40,19 +45,6 @@ set_admin_paid_users(PAID_USERS)
 set_start_paid_users(PAID_USERS)
 
 # === Обработчики ===
-
-async def show_lessons_menu(context, chat_id):
-    """Показать меню уроков"""
-    buttons = []
-    for key, lesson in LESSONS.items():
-        if key.startswith("lesson_"):
-            buttons.append([InlineKeyboardButton(lesson["title"], callback_data=f"menu_{key}")])
-    
-    await context.bot.send_message(
-        chat_id=chat_id, 
-        text="📚 Выбери урок:", 
-        reply_markup=InlineKeyboardMarkup(buttons)
-    )
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.from_user.id != OWNER_ID:
@@ -90,6 +82,11 @@ async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYP
 
     await show_lessons_menu(context, query.message.chat.id)
 
+# === Webhook обработчик ===
+async def webhook(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Обработчик для webhook"""
+    pass
+
 # === Настройка приложения ===
 def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
@@ -116,7 +113,7 @@ def main():
             listen="0.0.0.0",
             port=PORT,
             webhook_url=WEBHOOK_URL,
-            secret_token="secret123"
+            secret_token="your_secret_token_here"  # Замените на свой секретный токен
         )
     else:
         print("🚀 Локальный запуск через polling...")
