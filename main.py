@@ -1,6 +1,7 @@
 import os
+from handlers.info import show_program, show_lessons_menu
+
 from dotenv import load_dotenv
-from aiohttp import web
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
@@ -12,12 +13,12 @@ from telegram.ext import (
 )
 
 # === Загрузка переменных окружения ===
-#load_dotenv()
+load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
-RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
-PORT = int(os.getenv("PORT", 8080))
+PORT = int(os.environ.get('PORT', 8000))  # Railway предоставляет PORT
+WEBHOOK_URL = os.environ.get('RAILWAY_STATIC_URL', '') + '/webhook'
 
 # === Импорты ===
 from handlers.start import start, set_paid_users as set_start_paid_users
@@ -30,12 +31,11 @@ from handlers.menu import (
     set_paid_users as set_menu_paid_users,
 )
 from handlers.admin import grant, revoke, list_paid, set_paid_users as set_admin_paid_users
-from handlers.info import show_program
-from utils.access import load_paid_users
-from lessons_data import LESSONS
+from handlers.info import show_program, show_lessons_menu
+from utils.supabase_db import fetch_all_paid_users
 
 # === Загрузка платных пользователей ===
-PAID_USERS = load_paid_users()
+PAID_USERS = fetch_all_paid_users()
 set_menu_paid_users(PAID_USERS)
 set_admin_paid_users(PAID_USERS)
 set_start_paid_users(PAID_USERS)
@@ -67,24 +67,6 @@ async def go_home(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def my_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"👤 Твой user_id: {update.message.from_user.id}")
 
-# === Webhook + старт ===
-
-async def handle_webhook(request):
-    data = await request.json()
-    update = Update.de_json(data, application.bot)
-    await application.update_queue.put(update)
-    return web.Response(text="OK")
-
-async def on_startup(app):
-    await application.initialize()
-    await application.start()
-    webhook_url = f"https://{RAILWAY_STATIC_URL}/{BOT_TOKEN}"
-    print("📡 Установка webhook:", webhook_url)
-    await application.bot.set_webhook(webhook_url)
-
-async def root(request):
-    return web.Response(text="🤖 Бот работает")
-
 async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     user_id = query.from_user.id
@@ -96,33 +78,42 @@ async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYP
 
     await show_lessons_menu(context, query.message.chat.id)
 
+# === Webhook обработчик ===
+async def webhook(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Обработчик для webhook"""
+    pass
 
-# === Запуск приложения Telegram ===
-application = ApplicationBuilder().token(BOT_TOKEN).build()
+# === Настройка приложения ===
+def main():
+    application = ApplicationBuilder().token(BOT_TOKEN).build()
 
-application.add_handler(CommandHandler("start", start))
-application.add_handler(CommandHandler("menu", menu))
-application.add_handler(CommandHandler("myid", my_id))
-application.add_handler(CommandHandler("grant", grant))
-application.add_handler(CommandHandler("revoke", revoke))
-application.add_handler(CommandHandler("list_paid", list_paid))
-application.add_handler(MessageHandler(filters.VIDEO, get_file_id))
-application.add_handler(CallbackQueryHandler(menu, pattern="^go_paid_menu$"))
-application.add_handler(CallbackQueryHandler(handle_step, pattern="^step_.*$"))
-application.add_handler(CallbackQueryHandler(handle_payment_buttons, pattern="^(buy|paid|not_ready)$"))
-application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
-application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
-application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
-application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
-application.add_handler(CallbackQueryHandler(go_paid_menu_handler, pattern="^go_paid_menu$"))
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("menu", menu))
+    application.add_handler(CommandHandler("myid", my_id))
+    application.add_handler(CommandHandler("grant", grant))
+    application.add_handler(CommandHandler("revoke", revoke))
+    application.add_handler(CommandHandler("list_paid", list_paid))
+    application.add_handler(MessageHandler(filters.VIDEO, get_file_id))
+    application.add_handler(CallbackQueryHandler(go_paid_menu_handler, pattern="^go_paid_menu$"))
+    application.add_handler(CallbackQueryHandler(handle_step, pattern="^step_.*$"))
+    application.add_handler(CallbackQueryHandler(handle_payment_buttons, pattern="^(buy|paid|not_ready|sepa_details|binance_details|cards_info|crypto_info|bank_info|additional_info)$"))
+    application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
+    application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
+    application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
+    application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
-
-# === Запуск aiohttp-сервера ===
-web_app = web.Application()
-web_app.router.add_post(f"/{BOT_TOKEN}", handle_webhook)
-web_app.router.add_get("/", root)
-web_app.on_startup.append(on_startup)
+    # === Настройка webhook ===
+    if WEBHOOK_URL:
+        print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=WEBHOOK_URL,
+            secret_token="your_secret_token_here"  # Замените на свой секретный токен
+        )
+    else:
+        print("🚀 Локальный запуск через polling...")
+        application.run_polling()
 
 if __name__ == "__main__":
-    print("🚀 Запуск на Railway...")
-    web.run_app(web_app, port=PORT)
+    main()
