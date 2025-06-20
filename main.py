@@ -15,9 +15,9 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
-PORT = int(os.environ.get('PORT', 8000))
 
-# Получаем URL от Railway
+# Добавьте эти строки для webhook:
+PORT = int(os.environ.get('PORT', 8000))
 RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
 if RAILWAY_STATIC_URL:
     WEBHOOK_URL = RAILWAY_STATIC_URL + '/webhook'
