@@ -98,25 +98,6 @@ def main():
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
     # === Автоматический выбор: webhook на Railway, polling локально ===
-    def main():
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
-
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("menu", menu))
-    application.add_handler(CommandHandler("myid", my_id))
-    application.add_handler(CommandHandler("grant", grant))
-    application.add_handler(CommandHandler("revoke", revoke))
-    application.add_handler(CommandHandler("list_paid", list_paid))
-    application.add_handler(MessageHandler(filters.VIDEO, get_file_id))
-    application.add_handler(CallbackQueryHandler(go_paid_menu_handler, pattern="^go_paid_menu$"))
-    application.add_handler(CallbackQueryHandler(handle_step, pattern="^step_.*$"))
-    application.add_handler(CallbackQueryHandler(handle_payment_buttons, pattern="^(buy|paid|not_ready|sepa_details|binance_details|cards_info|crypto_info|bank_info|additional_info)$"))
-    application.add_handler(CallbackQueryHandler(go_home, pattern="^go_home$"))
-    application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
-    application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
-    application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
-
-    # === Автоматический выбор: webhook на Railway, polling локально ===
     if RAILWAY_STATIC_URL:
         webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
         print(f"🚀 Railway: запуск через webhook на {webhook_url}")
@@ -129,6 +110,7 @@ def main():
     else:
         print("🚀 Локальный запуск через polling...")
         application.run_polling()
+
 
 
 if __name__ == "__main__":
