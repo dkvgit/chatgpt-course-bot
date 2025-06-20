@@ -105,7 +105,7 @@ def main():
         application.run_webhook(
             listen="0.0.0.0",
             port=PORT,
-            webhook_url=webhook_url,
+            path="/webhook",
         )
     else:
         print("🚀 Локальный запуск через polling...")
