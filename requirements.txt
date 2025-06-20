@@ -1,9 +1,4 @@
-python-telegram-bot==20.8
-aiohttp==3.9.5
-python-dotenv==1.0.1
-supabase==2.15.3
-
-
-
-
-
+python-telegram-bot[webhooks]==20.8
+aiohttp>=3.11.18
+python-dotenv==1.0.0
+supabase==2.0.2
