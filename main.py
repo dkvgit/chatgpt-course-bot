@@ -103,10 +103,12 @@ def main():
         print(f"🚀 Railway: запуск через webhook на {webhook_url}")
         print(f"🔧 PORT: {PORT}")
         application.run_webhook(
-            listen="0.0.0.0",
-            port=PORT,
-            path="/webhook",
-        )
+    listen="0.0.0.0",
+    port=PORT,
+    webhook_url=webhook_url,  # ← ОБЯЗАТЕЛЬНО
+    path="/webhook",          # ← чтобы совпадал с URL
+)
+
     else:
         print("🚀 Локальный запуск через polling...")
         application.run_polling()
