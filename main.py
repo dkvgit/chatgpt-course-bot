@@ -107,22 +107,18 @@ def main():
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
     # === Запуск ===
-    
-FORCE_POLLING = os.environ.get('FORCE_POLLING', 'false').lower() == 'true'
+    FORCE_POLLING = os.environ.get('FORCE_POLLING', 'false').lower() == 'true'
 
-if FORCE_POLLING or not WEBHOOK_URL:
-    print("🚀 Принудительный запуск через polling...")
-    application.run_polling()
-else:
-    print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=WEBHOOK_URL,
-    )
-    else:
-        print("🚀 Локальный запуск через polling...")
+    if FORCE_POLLING or not WEBHOOK_URL:
+        print("🚀 Принудительный запуск через polling...")
         application.run_polling()
+    else:
+        print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=WEBHOOK_URL,
+        )
 
 if __name__ == "__main__":
     main()
