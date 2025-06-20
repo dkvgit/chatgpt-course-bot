@@ -16,11 +16,11 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
 
-# Добавьте эти строки для webhook:
+# Webhook настройки для Railway:
 PORT = int(os.environ.get('PORT', 8000))
 RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
 if RAILWAY_STATIC_URL:
-    WEBHOOK_URL = RAILWAY_STATIC_URL + '/webhook'
+    WEBHOOK_URL = 'https://' + RAILWAY_STATIC_URL + '/webhook'
 else:
     WEBHOOK_URL = None
 
@@ -108,14 +108,12 @@ def main():
 
     # === Запуск ===
     if WEBHOOK_URL:
-    print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
-    # Принудительно устанавливаем webhook
-    await application.bot.set_webhook(url=WEBHOOK_URL)
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=WEBHOOK_URL,
-    )
+        print(f"🚀 Запуск через webhook на {WEBHOOK_URL}")
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=WEBHOOK_URL,
+        )
     else:
         print("🚀 Локальный запуск через polling...")
         application.run_polling()
