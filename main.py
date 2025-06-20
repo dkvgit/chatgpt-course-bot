@@ -99,17 +99,18 @@ def main():
 
     # === Автоматический выбор: webhook на Railway, polling локально ===
     if RAILWAY_STATIC_URL:
-    webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
-    print(f"🚀 Railway: запуск через webhook на {webhook_url}")
-    print(f"🔧 PORT: {PORT}")
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=webhook_url,
-    )
-else:
-    print("🚀 Локальный запуск через polling...")
-    application.run_polling()
+        webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
+        print(f"🚀 Railway: запуск через webhook на {webhook_url}")
+        print(f"🔧 PORT: {PORT}")
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=webhook_url,
+        )
+    else:
+        print("🚀 Локальный запуск через polling...")
+        application.run_polling()
+
 
 
     else:
