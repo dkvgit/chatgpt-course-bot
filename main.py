@@ -1,4 +1,4 @@
-import asyncio  # наверху файла
+import asyncio
 import os
 
 from dotenv import load_dotenv
@@ -18,7 +18,6 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
 
-# Webhook настройки для Railway:
 PORT = int(os.environ.get('PORT', 8000))
 RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
 
@@ -43,7 +42,6 @@ set_admin_paid_users(PAID_USERS)
 set_start_paid_users(PAID_USERS)
 
 # === Обработчики ===
-
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.from_user.id != OWNER_ID:
         await update.message.reply_text("⛔️ Только администратор может загружать видео.")
@@ -81,8 +79,6 @@ async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     await show_lessons_menu(context, query.message.chat.id)
 
 # === Запуск приложения ===
-import asyncio  # наверху файла
-
 async def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
@@ -103,20 +99,18 @@ async def main():
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
     if RAILWAY_STATIC_URL:
-    webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
-    print(f"🚀 Railway: запуск через webhook на {webhook_url}")
-    await application.bot.set_webhook(webhook_url)  # ← ЭТО ОБЯЗАТЕЛЬНО!
-    await application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=webhook_url
-    )
-
+        webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
+        print(f"🚀 Railway: запуск через webhook на {webhook_url}")
+        await application.bot.set_webhook(webhook_url)  # Устанавливаем вебхук
+        await application.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=webhook_url
+        )
     else:
         print("🚀 Локальный запуск через polling...")
         await application.run_polling()
 
-# ⛔️ Без asyncio.run()
 if __name__ == "__main__":
     import nest_asyncio
     nest_asyncio.apply()
