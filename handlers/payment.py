@@ -18,7 +18,7 @@ async def handle_payment_buttons(update: Update, context: ContextTypes.DEFAULT_T
     if query.data == "buy":
         await context.bot.send_message(chat_id=query.message.chat.id, text="""🔸 **Поддержать проект / Выберите удобный способ:**
 
-    💰 **Стоимость курса: 500₽ / 6 EUR / 6 USDT**""", reply_markup=InlineKeyboardMarkup(
+    💰 **Стоимость курса: 100₽ / 10 EUR / 10 USDT**""", reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("💳 🔸 Быстрая оплата картой 🔸", callback_data="cards_info")],
                 [InlineKeyboardButton("PayPal", url="https://paypal.me/dkvpay"),
                  InlineKeyboardButton("Boosty", url="https://boosty.to/dkvboosty/donate"),
@@ -52,7 +52,7 @@ async def handle_payment_buttons(update: Update, context: ContextTypes.DEFAULT_T
 🏛️ **Банк:** Revolut Bank UAB
 📍 **Адрес банка:** Kostitucijos ave. 21B, 08130, Vilnius, Lithuania
 
-💰 **Сумма:** 6 EUR (примерно 500₽)
+💰 **Сумма:** 10 EUR (примерно 500₽)
 📝 **Назначение платежа:** AI Course + ваш @username
 
 ⚠️ **Важно:**
@@ -76,7 +76,7 @@ async def handle_payment_buttons(update: Update, context: ContextTypes.DEFAULT_T
 2. Перейдите в раздел "Pay"
 3. Выберите "Отправить"
 4. Введите Pay ID: **39933544**
-5. Укажите сумму: **6 USDT** (примерно 500₽)
+5. Укажите сумму: **10 USDT** (примерно 500₽)
 6. Добавьте заметку: "AI Course + ваш @username"
 7. Подтвердите перевод
 
