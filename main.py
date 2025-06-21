@@ -18,7 +18,7 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
 
-PORT = int(os.environ.get('PORT', 8080))
+PORT = int(os.environ.get('PORT', 8080))  # Railway использует 8080
 RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
 
 # === Импорты ===
@@ -99,7 +99,7 @@ async def main():
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
     if RAILWAY_STATIC_URL:
-        webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
+        webhook_url = f"https://{RAILWAY_STATIC_URL}/"  # важно: корень!
         print(f"🚀 Railway: запуск через webhook на {webhook_url}")
         await application.bot.set_webhook(webhook_url)
         await application.run_webhook(
@@ -114,4 +114,4 @@ async def main():
 if __name__ == "__main__":
     import nest_asyncio
     nest_asyncio.apply()
-    asyncio.run(main())
+    asyncio.get_event_loop().run_until_complete(main())
