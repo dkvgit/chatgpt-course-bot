@@ -18,7 +18,7 @@ async def handle_payment_buttons(update: Update, context: ContextTypes.DEFAULT_T
     if query.data == "buy":
         await context.bot.send_message(chat_id=query.message.chat.id, text="""🔸 **Поддержать проект / Выберите удобный способ:**
 
-    💰 **Стоимость курса: 100₽ / 10 EUR / 10 USDT**""", reply_markup=InlineKeyboardMarkup(
+    💰 **Стоимость курса: 1000₽ / 10 EUR / 10 USDT**""", reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("💳 🔸 Быстрая оплата картой 🔸", callback_data="cards_info")],
                 [InlineKeyboardButton("PayPal", url="https://paypal.me/dkvpay"),
                  InlineKeyboardButton("Boosty", url="https://boosty.to/dkvboosty/donate"),
