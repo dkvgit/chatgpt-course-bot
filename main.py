@@ -1,5 +1,6 @@
-import os
 import asyncio  # наверху файла
+import os
+
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -82,9 +83,10 @@ async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYP
 # === Запуск приложения ===
 import asyncio  # наверху файла
 
-def main():
+async def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Обработчики
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("menu", menu))
     application.add_handler(CommandHandler("myid", my_id))
@@ -100,25 +102,22 @@ def main():
     application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
-    async def run():
-        if RAILWAY_STATIC_URL:
-            webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
-            print(f"🚀 Railway: запуск через webhook на {webhook_url}")
-            print(f"🔧 PORT: {PORT}")
-            await application.bot.set_webhook(webhook_url)
-            await application.run_webhook(
-                listen="0.0.0.0",
-                port=PORT,
-                webhook_url=webhook_url,
-            )
-        else:
-            print("🚀 Локальный запуск через polling...")
-            await application.run_polling()
+    if RAILWAY_STATIC_URL:
+        webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
+        print(f"🚀 Railway: запуск через webhook на {webhook_url}")
+        print(f"🔧 PORT: {PORT}")
+        await application.bot.set_webhook(webhook_url)
+        await application.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=webhook_url,
+        )
+    else:
+        print("🚀 Локальный запуск через polling...")
+        await application.run_polling()
 
-    asyncio.run(run())
-
-
-
-
+# ⛔️ Без asyncio.run()
 if __name__ == "__main__":
-    main()
+    import nest_asyncio
+    nest_asyncio.apply()
+    asyncio.get_event_loop().run_until_complete(main())
