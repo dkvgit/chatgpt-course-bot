@@ -1,3 +1,5 @@
 python-telegram-bot[webhooks]
 python-dotenv
 supabase
+nest_asyncio
+
