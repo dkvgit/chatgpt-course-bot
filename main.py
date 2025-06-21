@@ -17,9 +17,9 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
-PORT = int(os.environ.get('PORT', 8000))
-RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
-WEBHOOK_URL = f"https://{RAILWAY_STATIC_URL}/webhook" if RAILWAY_STATIC_URL else None
+
+PORT = int(os.environ.get('PORT', 8080))
+RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL')
 
 # === Импорты ===
 from handlers.start import start, set_paid_users as set_start_paid_users
@@ -42,10 +42,9 @@ set_admin_paid_users(PAID_USERS)
 set_start_paid_users(PAID_USERS)
 
 # === Обработчики ===
-
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.from_user.id != OWNER_ID:
-        await update.message.reply_text("⛔️ Только админ может загружать видео.")
+        await update.message.reply_text("⛔️ Только администратор может загружать видео.")
         return
     if update.message.video:
         file_id = update.message.video.file_id
@@ -54,6 +53,7 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def go_home(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+
     await context.bot.send_message(
         chat_id=query.message.chat.id,
         text="👋 Добро пожаловать в мини-курс «Нейросети без паники»!\n\n"
@@ -82,6 +82,7 @@ async def go_paid_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYP
 async def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Обработчики
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("menu", menu))
     application.add_handler(CommandHandler("myid", my_id))
@@ -97,13 +98,14 @@ async def main():
     application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
-    if WEBHOOK_URL:
-        print(f"🚀 Railway: запуск через webhook на {WEBHOOK_URL}")
-        await application.bot.set_webhook(WEBHOOK_URL)
+    if RAILWAY_STATIC_URL:
+        webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
+        print(f"🚀 Railway: запуск через webhook на {webhook_url}")
+        await application.bot.set_webhook(webhook_url)
         await application.run_webhook(
             listen="0.0.0.0",
             port=PORT,
-            webhook_url=WEBHOOK_URL
+            webhook_url=webhook_url
         )
     else:
         print("🚀 Локальный запуск через polling...")
