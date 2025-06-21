@@ -103,15 +103,15 @@ async def main():
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
 
     if RAILWAY_STATIC_URL:
-        webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
-        print(f"🚀 Railway: запуск через webhook на {webhook_url}")
-        print(f"🔧 PORT: {PORT}")
-        await application.bot.set_webhook(webhook_url)
-        await application.run_webhook(
-            listen="0.0.0.0",
-            port=PORT,
-            webhook_url=webhook_url,
-        )
+    webhook_url = f"https://{RAILWAY_STATIC_URL}/webhook"
+    print(f"🚀 Railway: запуск через webhook на {webhook_url}")
+    await application.bot.set_webhook(webhook_url)  # ← ЭТО ОБЯЗАТЕЛЬНО!
+    await application.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        webhook_url=webhook_url
+    )
+
     else:
         print("🚀 Локальный запуск через polling...")
         await application.run_polling()
