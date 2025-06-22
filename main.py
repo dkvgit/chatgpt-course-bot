@@ -2,7 +2,7 @@ import asyncio
 import os
 
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, BotCommand
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -40,6 +40,16 @@ PAID_USERS = fetch_all_paid_users()
 set_menu_paid_users(PAID_USERS)
 set_admin_paid_users(PAID_USERS)
 set_start_paid_users(PAID_USERS)
+
+# === Настройка меню команд ===
+async def setup_bot_menu(application):
+    """Настройка кнопки меню в боте"""
+    commands = [
+        BotCommand("start", "🚀 Запуск бота"),
+        BotCommand("menu", "📚 Меню уроков"),
+        BotCommand("myid", "👤 Мой Telegram ID"),
+    ]
+    await application.bot.set_my_commands(commands)
 
 # === Обработчики ===
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -97,6 +107,9 @@ async def main():
     application.add_handler(CallbackQueryHandler(open_lesson, pattern="^menu_lesson_.*"))
     application.add_handler(CallbackQueryHandler(back_to_menu_handler, pattern="^back_to_menu$"))
     application.add_handler(CallbackQueryHandler(show_program, pattern="^show_program$"))
+
+    # Настройка кнопки меню
+    await setup_bot_menu(application)
 
     if RAILWAY_STATIC_URL:
         webhook_url = f"https://{RAILWAY_STATIC_URL}/"  # важно: корень!
