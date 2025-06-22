@@ -1,5 +1,4 @@
 # lessons_data.py
-
 LESSONS = {
     "lesson_0": {
         "title": "Введение в курс Нейросети без паники: простой старт с ChatGPT",
